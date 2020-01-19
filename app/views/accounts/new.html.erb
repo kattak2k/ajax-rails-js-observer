@@ -1,0 +1,67 @@
+<h1 class="text-info">Find Accounts</h1>
+
+<div class="shadow-sm p-3 mb-5 bg-white rounded">
+<%= form_for( @accounts, url: search_accounts_path, method: :post, remote: true ) do |f| %>
+
+    <div class="form-group">
+            <%= label_tag(:name, 'Account Name') %>
+            <%= f.text_field :name, required: true%>
+    </div>   
+		
+    <div class="form-group form-check"> 
+        <div class="actions" class="btn btn-info">
+            <%= f.submit("Search") %>
+        </div>
+	</div>
+
+<% end %>
+
+</div>
+
+<!-- List will added as child --> 
+<div id="accounts-details"></div>
+
+<script type="text/javascript">
+
+
+const domLoaded = () => {
+
+  const searchButton = document.getElementById('new_account');
+  const accountsDiv = document.getElementById('accounts-details');
+  const modal = document.getElementById('myModal');
+
+  const displayModal = (e) => {
+    //e.preventDefault();
+    modal.style.display =  'block' ;
+  }
+  const hideModal = (e) => {
+    modal.style.display = 'none';
+  }
+
+searchButton.addEventListener('submit', displayModal);
+  //accountsDiv.addEventListener('DOMNodeInserted', hideModal); //old fashion
+
+//----------------Observer-------------------------------
+  const callback = mutations => {
+    mutations.forEach( (e) => {
+            if (e.type === 'childList' ) {
+              hideModal();
+            };
+    }); 
+  };
+  
+  const config = {
+    attributes: true,
+    subtree: true,
+    childList: true
+  };
+
+  const observer = new MutationObserver(callback);
+  observer.observe(accountsDiv, config);
+//observer.disconnect();
+
+  }
+
+  window.addEventListener('DOMContentLoaded', domLoaded)
+
+</script>
